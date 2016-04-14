@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 from collections import defaultdict
+from time import time
 
 from tornado import web
 from tornado import gen
@@ -9,6 +10,8 @@ from celery import states
 from ..views import BaseHandler
 from ..utils.broker import Broker
 from ..api.control import ControlHandler
+
+PADDING = 60
 
 
 class Monitor(BaseHandler):
@@ -20,7 +23,8 @@ class Monitor(BaseHandler):
 class SucceededTaskMonitor(BaseHandler):
     @web.authenticated
     def get(self):
-        timestamp = self.get_argument('lastquery', type=float)
+        # timestamp = self.get_argument('lastquery', type=float)
+        timestamp = time() - PADDING
         state = self.application.events.state
 
         data = defaultdict(int)
@@ -37,7 +41,8 @@ class SucceededTaskMonitor(BaseHandler):
 class TimeToCompletionMonitor(BaseHandler):
     @web.authenticated
     def get(self):
-        timestamp = self.get_argument('lastquery', type=float)
+        # timestamp = self.get_argument('lastquery', type=float)
+        timestamp = time() - PADDING
         state = self.application.events.state
 
         execute_time = 0
@@ -70,7 +75,8 @@ class TimeToCompletionMonitor(BaseHandler):
 class FailedTaskMonitor(BaseHandler):
     @web.authenticated
     def get(self):
-        timestamp = self.get_argument('lastquery', type=float)
+        # timestamp = self.get_argument('lastquery', type=float)
+        timestamp = time() - PADDING
         state = self.application.events.state
 
         data = defaultdict(int)
